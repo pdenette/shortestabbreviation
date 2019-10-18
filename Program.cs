@@ -6,22 +6,53 @@ namespace shortestabbreviation
 {
     class Program
     {
+        static bool checkArrayForDuplicates(string[] abDay)
+        {
+            if (abDay.Distinct().Count() != abDay.Count())
+            {
+                return true;
+            }
+            return false;
+        }
+
+        static void writeShortestAbbreviationToFile(string[] shortestAbbreviation)
+        {
+            using (System.IO.StreamWriter file =
+            new System.IO.StreamWriter(@".\abbreviated.txt", true))
+            {
+                file.WriteLine(string.Join(" ", shortestAbbreviation));
+            }
+        }
+
+        static void findShortestPossibleAbbriviation(string[] days)
+        {
+            string[] abDay = new string[days.Length];
+            // Console.WriteLine(abDay[6]);
+            int incrementAbb = 1;
+
+            while (checkArrayForDuplicates(abDay))
+            {
+                int incrementDay = 0;
+                foreach (String w in days)
+                {
+                    if (w.Length >= incrementAbb)
+                    {
+                        abDay[incrementDay] = w.Substring(0, incrementAbb);
+                    }
+                    incrementDay++;
+                }
+                incrementAbb++;
+            }
+            writeShortestAbbreviationToFile(abDay);
+        }
+
         static void Main(string[] args)
         {
+            //if exists delete file 
             foreach (string line in File.ReadLines(@".\list.txt"))
             {
-                // Console.WriteLine(line);
                 string[] words = line.Split(' ');
-                foreach (String w in words)
-                {
-                    Console.WriteLine(w.Substring(0, 3));
-                }
-                if (words.Distinct().Count() != words.Count())
-                {
-                    Console.WriteLine("Duplicate Found");
-                }
-
-                break;
+                findShortestPossibleAbbriviation(words);
             }
         }
     }
